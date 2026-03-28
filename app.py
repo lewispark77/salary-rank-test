@@ -200,3 +200,68 @@ RANK_IMAGES = {
     "창고시절 제프 베이조스": f"{IMAGE_DIR}/7계급 창고시절 제프 베이조스.jpg",
     "차고시절 스티브 잡스": f"{IMAGE_DIR}/8계급 차고시절 스티브 잡스.jpg",
     "거절만 당하는 커널 센더스": f"{IMAGE_DIR}/9계급 거절만 당하는 커널 센더스.jpg",
+    "신문 돌리던 워렌버핏": f"{IMAGE_DIR}/10계급 신문 돌리던 워렌버핏.jpg"
+}
+
+st.markdown("<h1 style='text-align: center; color: #ffeb3b !important;'>👾 영끌 연봉 억만장자 랭킹전 👾</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>연말정산 원천징수영수증 기준으로 나의 진짜 랭킹을 확인하세요!</p>", unsafe_allow_html=True)
+st.divider()
+
+col1, col2 = st.columns(2)
+with col1:
+    company_input = st.text_input("🏢 기업명 (정확한 법인명)", placeholder="예: 삼전, 현대차, 카카오")
+with col2:
+    total_salary_input = st.number_input("💰 원천징수영수증 총액 (원 단위)", min_value=0, step=1000000, value=80000000, format="%d")
+
+st.caption(f"✨ 입력된 나의 영끌 총 연봉: **{total_salary_input:,}원**")
+
+if st.button("🕹️ INSERT COIN : 내 랭킹 확인하기 🕹️", use_container_width=True):
+    if not company_input:
+        st.warning("기업명을 입력해 주세요!")
+    else:
+        with st.spinner('국민연금 서버와 통신 중... (데이터 로딩 5~10초)'):
+            result = compare_my_salary(company_input, total_salary_input)
+            
+            if "에러" in result: 
+                st.error(result["에러"])
+            else: 
+                st.success("🎉 스테이지 클리어! 데이터 분석 완료!")
+                tab1, tab2 = st.tabs(["🏢 사내 랭킹", "🇰🇷 전국 랭킹"])
+                
+                with tab1:
+                    st.subheader(f"사내에서 당신은 **[{result['회사_결과']['칭호']}]** 계급 (총 10계급 중 {result['회사_결과']['계급']}계급)입니다!")
+                    
+                    img_path = RANK_IMAGES.get(result['회사_결과']['칭호'])
+                    if img_path and os.path.exists(img_path):
+                        st.image(img_path, use_container_width=True) 
+                    else:
+                        st.error(f"⚠️ 이미지를 찾을 수 없습니다: {img_path}")
+                        
+                    m_col1, m_col2, m_col3 = st.columns(3)
+                    m_col1.metric("비교 기업", result['비교_기업명'])
+                    m_col2.metric("기업 평균 연봉", result['기업_평균연봉'])
+                    m_col3.metric("나의 위치", f"상위 {result['회사_결과']['상위']}")
+
+                with tab2:
+                    st.subheader(f"전국 직장인 중 당신은 **[{result['전국_결과']['칭호']}]** 계급 (총 10계급 중 {result['전국_결과']['계급']}계급)입니다!")
+                    
+                    img_path = RANK_IMAGES.get(result['전국_결과']['칭호'])
+                    if img_path and os.path.exists(img_path):
+                        st.image(img_path, use_container_width=True)
+                    else:
+                        st.error(f"⚠️ 이미지를 찾을 수 없습니다: {img_path}")
+                        
+                    m_col1, m_col2, m_col3 = st.columns(3)
+                    m_col1.metric("비교 집단", "전국 직장인")
+                    m_col2.metric("전국 평균 연봉", result['전국_평균연봉'])
+                    m_col3.metric("나의 위치", f"상위 {result['전국_결과']['상위']}")
+                
+                st.divider()
+                
+                # 🌟 바이럴 카톡 공유창 업그레이드!
+                st.markdown("<h3 style='color: #ffeb3b !important;'>💌 친구에게 도전장 보내기 (결과 복사)</h3>", unsafe_allow_html=True)
+                st.caption("👇 아래 네모 박스 오른쪽 위에 마우스를 올리면 생기는 **'복사 아이콘(📋)'**을 누르고 카톡에 붙여넣어 보세요!")
+                
+                # 코드를 보여주는 st.code()를 활용하면 스트림릿이 자동으로 '원클릭 복사' 버튼을 만들어줍니다.
+                st.code(result['공유_메시지'], language="plaintext")
+                st.balloons()
