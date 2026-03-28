@@ -4,11 +4,11 @@ import urllib.parse
 import os
 
 # ==========================================
-# 0. 페이지 설정 (반드시 최상단에 위치)
+# 0. 페이지 설정
 # ==========================================
 st.set_page_config(page_title="억만장자 계급 테스트", page_icon="🕹️", layout="wide")
 
-# 🌟 레트로 오락실 테마 CSS 주입
+# 🌟 레트로 오락실 테마 CSS 주입 (복사 박스 버그 픽스 완료!)
 st.markdown("""
 <style>
 @import url('https://cdn.jsdelivr.net/gh/neodgm/neodgm-web-font@1.530/neodgm/style.css');
@@ -68,19 +68,29 @@ div.stButton > button:active {
     border: 2px solid #e94560 !important;
 }
 
-/* 🌟 추가: 긴 기업명 잘림(...) 방지 및 예쁘게 줄바꿈 처리 */
+/* 🌟 긴 기업명 줄바꿈 처리 */
 [data-testid="stMetricValue"] > div {
     white-space: normal !important;
     word-break: keep-all !important;
     overflow-wrap: break-word !important;
-    font-size: 1.4rem !important; /* 글자가 너무 크면 넘치니 살짝 줄임 */
+    font-size: 1.4rem !important;
     line-height: 1.3 !important;
+}
+
+/* 🌟 픽스: 복사하기 박스(코드 블록) 바탕색 및 글자색 강제 수정 */
+[data-testid="stCodeBlock"] {
+    background-color: #0f3460 !important;
+    border: 2px solid #00ffcc !important;
+}
+[data-testid="stCodeBlock"] * {
+    color: #00ffcc !important;
+    background-color: transparent !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 1. 백엔드 로직 (데이터 수집 및 계산)
+# 1. 백엔드 로직
 # ==========================================
 def safe_int(value):
     if value is None: return 0
@@ -103,7 +113,11 @@ def get_billionaire_rank(my_salary, company_avg):
 def fetch_company_data(company_name):
     company_name = company_name.upper().strip()
     
+    # 🌟 SK 본사 및 텔레콤 등 굵직한 곳 추가!
     vip_mapping = {
+        "SK": "에스케이 주식회사",
+        "SK텔레콤": "에스케이텔레콤(주)",
+        "SK이노베이션": "에스케이이노베이션 주식회사",
         "삼전": "삼성전자(주)",
         "삼성전자": "삼성전자(주)",
         "현대차": "현대자동차(주)",
@@ -195,7 +209,7 @@ def compare_my_salary(company: str, total_salary: int):
     }
 
 # ==========================================
-# 2. 프론트엔드 로직 (Streamlit 화면)
+# 2. 프론트엔드 로직
 # ==========================================
 IMAGE_DIR = "images"
 RANK_IMAGES = {
@@ -217,7 +231,7 @@ st.divider()
 
 col1, col2 = st.columns(2)
 with col1:
-    company_input = st.text_input("🏢 기업명 (정확한 법인명)", placeholder="예: 삼전, 현대차, 카카오")
+    company_input = st.text_input("🏢 기업명 (정확한 법인명)", placeholder="예: 삼전, 현대차, SK")
 with col2:
     total_salary_input = st.number_input("💰 원천징수영수증 총액 (원 단위)", min_value=0, step=1000000, value=80000000, format="%d")
 
@@ -268,5 +282,6 @@ if st.button("🕹️ INSERT COIN : 내 랭킹 확인하기 🕹️", use_contai
                 st.markdown("<h3 style='color: #ffeb3b !important;'>💌 친구에게 도전장 보내기 (결과 복사)</h3>", unsafe_allow_html=True)
                 st.caption("👇 아래 네모 박스 오른쪽 위에 마우스를 올리면 생기는 **'복사 아이콘(📋)'**을 누르고 카톡에 붙여넣어 보세요!")
                 
+                # 🌟 보호색 버그 픽스된 코드 블록
                 st.code(result['공유_메시지'], language="plaintext")
                 st.balloons()
