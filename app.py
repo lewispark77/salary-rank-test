@@ -4,6 +4,80 @@ import urllib.parse
 import os
 
 # ==========================================
+# 0. 페이지 설정 (반드시 최상단에 위치)
+# ==========================================
+st.set_page_config(page_title="억만장자 계급 테스트", page_icon="🕹️", layout="wide")
+
+# 🌟 레트로 오락실 테마 CSS 주입
+st.markdown("""
+<style>
+/* 한국어 레트로 픽셀 폰트 (둥근모꼴) 불러오기 */
+@import url('https://cdn.jsdelivr.net/gh/neodgm/neodgm-web-font@1.530/neodgm/style.css');
+
+html, body, [class*="css"]  {
+    font-family: 'NeoDunggeunmo', sans-serif !important;
+}
+
+/* 전체 배경을 어두운 오락실 느낌(다크 네이비)으로 */
+.stApp {
+    background-color: #1a1a2e;
+}
+
+/* 텍스트 색상을 레트로한 밝은 회색/흰색으로 강제 변경 */
+h1, h2, h3, p, span, label, div {
+    color: #e0e0e0 !important;
+}
+
+/* 입력창 디자인 (다크 톤 + 네온 민트 글씨) */
+div[data-baseweb="input"] > div {
+    background-color: #16213e !important;
+    border: 2px solid #0f3460 !important;
+    border-radius: 0px !important;
+}
+input {
+    color: #00ffcc !important;
+    font-family: 'NeoDunggeunmo', sans-serif !important;
+}
+
+/* 🚀 대망의 시작 버튼 (오락실 붉은색 버튼 디자인) */
+div.stButton > button {
+    background-color: #e94560 !important;
+    color: white !important;
+    border: 4px solid #fff !important;
+    border-radius: 0px !important;
+    box-shadow: 4px 4px 0px #0f3460 !important;
+    font-size: 1.2rem !important;
+    padding: 10px 0px !important;
+    transition: all 0.1s !important;
+}
+div.stButton > button:active {
+    transform: translate(4px, 4px) !important;
+    box-shadow: 0px 0px 0px #0f3460 !important;
+}
+
+/* 탭 디자인 수정 */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 10px;
+}
+.stTabs [data-baseweb="tab"] {
+    background-color: #16213e !important;
+    border-radius: 0px !important;
+    border: 2px solid #0f3460 !important;
+}
+.stTabs [aria-selected="true"] {
+    background-color: #e94560 !important;
+    border-color: #fff !important;
+}
+
+/* 성공/에러 알림창 색상 조정 */
+.stAlert {
+    background-color: #16213e !important;
+    border: 2px solid #e94560 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================
 # 1. 백엔드 로직 (데이터 수집 및 계산)
 # ==========================================
 def safe_int(value):
@@ -93,99 +167,4 @@ def compare_my_salary(company: str, salary: int, bonus: int = 0):
     comp_data = fetch_company_data(company)
     
     if not comp_data:
-        return {"에러": f"'{company}' 데이터를 찾을 수 없습니다. 정확한 법인명을 입력해 주세요."}
-        
-    company_rank = get_billionaire_rank(total_salary, comp_data["평균연봉"])
-    national_rank = get_billionaire_rank(total_salary, NATIONAL_AVERAGE)
-    
-    return {
-        "기본급": f"{salary:,}원",
-        "성과금": f"{bonus:,}원",
-        "총_연봉": f"{total_salary:,}원",
-        "비교_기업명": comp_data["기업명"],
-        "기업_평균연봉": f"{int(comp_data['평균연봉']):,}원",
-        "전국_평균연봉": f"{NATIONAL_AVERAGE:,}원",
-        "회사_결과": company_rank,
-        "전국_결과": national_rank,
-        "공유_메시지": f"나의 영끌 연봉은 {total_salary:,}원! {comp_data['기업명']} 기준 상위 {company_rank['상위']}! 전국 직장인 중에서는 상위 {national_rank['상위']}입니다."
-    }
-
-# ==========================================
-# 2. 프론트엔드 로직 (Streamlit 화면)
-# ==========================================
-st.set_page_config(page_title="억만장자 계급 테스트", page_icon="💸", layout="wide")
-
-IMAGE_DIR = "images"
-RANK_IMAGES = {
-    "일론머스크": f"{IMAGE_DIR}/1계급 일론머스크.jpg",
-    "만수르": f"{IMAGE_DIR}/2계급 만수르.jpg",
-    "젠슨 황": f"{IMAGE_DIR}/3계급 젠슨 황.jpg",
-    "피터 틸": f"{IMAGE_DIR}/4계급 피터 틸.jpg",
-    "워렌 버핏": f"{IMAGE_DIR}/5계급 워렌 버핏.jpg",
-    "기숙사 시절 마크 져커버그": f"{IMAGE_DIR}/6계급 기숙사 시절 마크 져커버그.jpg",
-    "창고시절 제프 베이조스": f"{IMAGE_DIR}/7계급 창고시절 제프 베이조스.jpg",
-    "차고시절 스티브 잡스": f"{IMAGE_DIR}/8계급 차고시절 스티브 잡스.jpg",
-    "거절만 당하는 커널 센더스": f"{IMAGE_DIR}/9계급 거절만 당하는 커널 센더스.jpg",
-    "신문 돌리던 워렌버핏": f"{IMAGE_DIR}/10계급 신문 돌리던 워렌버핏.jpg"
-}
-
-st.title("💸 내 영끌 연봉은 억만장자 계급으로 몇 등급일까?")
-st.markdown("기본급에 성과금까지 모두 합친 '영끌 연봉'으로 진짜 내 위치를 확인해 보세요!")
-st.divider()
-
-col1, col2, col3 = st.columns(3)
-with col1:
-    company_input = st.text_input("🏢 기업명 (정확한 법인명)", placeholder="예: 삼전, 현대차, 카카오")
-with col2:
-    salary_input = st.number_input("💰 계약 기본급 (원 단위)", min_value=0, step=1000000, value=60000000, format="%d")
-with col3:
-    bonus_input = st.number_input("💵 영끌 성과금 (원 단위)", min_value=0, step=1000000, value=20000000, format="%d")
-
-st.caption(f"✨ 합산된 영끌 총 연봉: **{salary_input + bonus_input:,}원**")
-
-if st.button("🚀 내 계급 확인하기", use_container_width=True):
-    if not company_input:
-        st.warning("기업명을 입력해 주세요!")
-    else:
-        with st.spinner('국민연금 빅데이터를 분석 중입니다... (약 5~10초 소요)'):
-            result = compare_my_salary(company_input, salary_input, bonus_input)
-            
-            if "에러" in result: 
-                st.error(result["에러"])
-            else: 
-                st.success("🎉 분석 완료!")
-                tab1, tab2 = st.tabs(["🏢 사내 연봉 계급", "🇰🇷 전국 직장인 계급"])
-                
-                with tab1:
-                    # 🌟 변경된 부분: (총 10계급 중 N계급) 문구가 친절하게 추가되었습니다!
-                    st.subheader(f"사내에서 당신은 **[{result['회사_결과']['칭호']}]** 계급 (총 10계급 중 {result['회사_결과']['계급']}계급)입니다!")
-                    
-                    img_path = RANK_IMAGES.get(result['회사_결과']['칭호'])
-                    if img_path and os.path.exists(img_path):
-                        st.image(img_path, use_container_width=True) 
-                    else:
-                        st.error(f"⚠️ 이미지를 찾을 수 없습니다: {img_path}")
-                        
-                    m_col1, m_col2, m_col3 = st.columns(3)
-                    m_col1.metric("비교 기업", result['비교_기업명'])
-                    m_col2.metric("기업 평균연봉", result['기업_평균연봉'])
-                    m_col3.metric("사내 나의 위치", f"상위 {result['회사_결과']['상위']}")
-
-                with tab2:
-                    # 🌟 변경된 부분: 전국 탭에도 동일하게 직관적인 문구 추가!
-                    st.subheader(f"전국 직장인 중 당신은 **[{result['전국_결과']['칭호']}]** 계급 (총 10계급 중 {result['전국_결과']['계급']}계급)입니다!")
-                    
-                    img_path = RANK_IMAGES.get(result['전국_결과']['칭호'])
-                    if img_path and os.path.exists(img_path):
-                        st.image(img_path, use_container_width=True)
-                    else:
-                        st.error(f"⚠️ 이미지를 찾을 수 없습니다: {img_path}")
-                        
-                    m_col1, m_col2, m_col3 = st.columns(3)
-                    m_col1.metric("비교 집단", "전국 직장인")
-                    m_col2.metric("전국 평균연봉", result['전국_평균연봉'])
-                    m_col3.metric("전국 나의 위치", f"상위 {result['전국_결과']['상위']}")
-                
-                st.divider()
-                st.info(f"💌 내 결과 공유하기: {result['공유_메시지']}")
-                st.balloons()
+        return {"에러": f"
