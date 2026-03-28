@@ -27,7 +27,6 @@ def get_billionaire_rank(my_salary, company_avg):
 def fetch_company_data(company_name):
     company_name = company_name.upper().strip()
     
-    # 🌟 대망의 VIP 프리패스 사전: 사람들이 많이 치는 대기업을 '정확한 법인명'으로 강제 매핑
     vip_mapping = {
         "삼전": "삼성전자(주)",
         "삼성전자": "삼성전자(주)",
@@ -45,11 +44,9 @@ def fetch_company_data(company_name):
         "KT": "주식회사 케이티"
     }
     
-    # 1. VIP 사전에 있으면 무조건 정확한 법인명으로 교체!
     if company_name in vip_mapping:
         company_name = vip_mapping[company_name]
     else:
-        # 2. 사전에 없는 경우 기존처럼 영어->한글 자동 번역만 수행
         eng_to_kor = {"SK": "에스케이", "LG": "엘지", "CJ": "씨제이", "HD": "에이치디", "GS": "지에스", "LS": "엘에스"}
         for eng, kor in eng_to_kor.items():
             company_name = company_name.replace(eng, kor)
@@ -160,7 +157,9 @@ if st.button("🚀 내 계급 확인하기", use_container_width=True):
                 tab1, tab2 = st.tabs(["🏢 사내 연봉 계급", "🇰🇷 전국 직장인 계급"])
                 
                 with tab1:
-                    st.subheader(f"사내에서 당신은 **[{result['회사_결과']['칭호']}]** 계급입니다!")
+                    # 🌟 변경된 부분: (총 10계급 중 N계급) 문구가 친절하게 추가되었습니다!
+                    st.subheader(f"사내에서 당신은 **[{result['회사_결과']['칭호']}]** 계급 (총 10계급 중 {result['회사_결과']['계급']}계급)입니다!")
+                    
                     img_path = RANK_IMAGES.get(result['회사_결과']['칭호'])
                     if img_path and os.path.exists(img_path):
                         st.image(img_path, use_container_width=True) 
@@ -173,7 +172,9 @@ if st.button("🚀 내 계급 확인하기", use_container_width=True):
                     m_col3.metric("사내 나의 위치", f"상위 {result['회사_결과']['상위']}")
 
                 with tab2:
-                    st.subheader(f"전국 직장인 중 당신은 **[{result['전국_결과']['칭호']}]** 계급입니다!")
+                    # 🌟 변경된 부분: 전국 탭에도 동일하게 직관적인 문구 추가!
+                    st.subheader(f"전국 직장인 중 당신은 **[{result['전국_결과']['칭호']}]** 계급 (총 10계급 중 {result['전국_결과']['계급']}계급)입니다!")
+                    
                     img_path = RANK_IMAGES.get(result['전국_결과']['칭호'])
                     if img_path and os.path.exists(img_path):
                         st.image(img_path, use_container_width=True)
