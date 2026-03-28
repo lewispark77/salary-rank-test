@@ -8,7 +8,7 @@ import os
 # ==========================================
 st.set_page_config(page_title="억만장자 계급 테스트", page_icon="🕹️", layout="wide")
 
-# 🌟 레트로 오락실 테마 CSS 주입 (복사 박스 버그 픽스 완료!)
+# 🌟 레트로 오락실 테마 CSS 주입 (복사창 디자인 완벽 수정)
 st.markdown("""
 <style>
 @import url('https://cdn.jsdelivr.net/gh/neodgm/neodgm-web-font@1.530/neodgm/style.css');
@@ -17,74 +17,46 @@ html, body, [class*="css"]  {
     font-family: 'NeoDunggeunmo', sans-serif !important;
 }
 
-.stApp {
-    background-color: #1a1a2e;
-}
+.stApp { background-color: #1a1a2e; }
+h1, h2, h3, p, span, label, div { color: #e0e0e0 !important; }
 
-h1, h2, h3, p, span, label, div {
-    color: #e0e0e0 !important;
-}
-
+/* 일반 입력창 */
 div[data-baseweb="input"] > div {
     background-color: #16213e !important;
     border: 2px solid #0f3460 !important;
+}
+input { color: #00ffcc !important; font-family: 'NeoDunggeunmo', sans-serif !important; }
+
+/* 🌟 복사하기용 텍스트 에어리어 (보호색 버그 해결!) */
+div[data-baseweb="textarea"] > div {
+    background-color: #0f3460 !important;
+    border: 2px solid #e94560 !important;
     border-radius: 0px !important;
 }
-input {
+textarea {
     color: #00ffcc !important;
     font-family: 'NeoDunggeunmo', sans-serif !important;
+    font-size: 1.1rem !important;
 }
 
+/* 버튼 디자인 */
 div.stButton > button {
-    background-color: #e94560 !important;
-    color: white !important;
-    border: 4px solid #fff !important;
-    border-radius: 0px !important;
-    box-shadow: 4px 4px 0px #0f3460 !important;
-    font-size: 1.2rem !important;
-    padding: 10px 0px !important;
-    transition: all 0.1s !important;
+    background-color: #e94560 !important; color: white !important;
+    border: 4px solid #fff !important; border-radius: 0px !important;
+    box-shadow: 4px 4px 0px #0f3460 !important; font-size: 1.2rem !important;
+    padding: 10px 0px !important; transition: all 0.1s !important;
 }
-div.stButton > button:active {
-    transform: translate(4px, 4px) !important;
-    box-shadow: 0px 0px 0px #0f3460 !important;
-}
+div.stButton > button:active { transform: translate(4px, 4px) !important; box-shadow: 0px 0px 0px #0f3460 !important; }
 
-.stTabs [data-baseweb="tab-list"] {
-    gap: 10px;
-}
-.stTabs [data-baseweb="tab"] {
-    background-color: #16213e !important;
-    border-radius: 0px !important;
-    border: 2px solid #0f3460 !important;
-}
-.stTabs [aria-selected="true"] {
-    background-color: #e94560 !important;
-    border-color: #fff !important;
-}
+.stTabs [data-baseweb="tab-list"] { gap: 10px; }
+.stTabs [data-baseweb="tab"] { background-color: #16213e !important; border: 2px solid #0f3460 !important; }
+.stTabs [aria-selected="true"] { background-color: #e94560 !important; border-color: #fff !important; }
+.stAlert { background-color: #16213e !important; border: 2px solid #e94560 !important; }
 
-.stAlert {
-    background-color: #16213e !important;
-    border: 2px solid #e94560 !important;
-}
-
-/* 🌟 긴 기업명 줄바꿈 처리 */
+/* 긴 기업명 줄바꿈 */
 [data-testid="stMetricValue"] > div {
-    white-space: normal !important;
-    word-break: keep-all !important;
-    overflow-wrap: break-word !important;
-    font-size: 1.4rem !important;
-    line-height: 1.3 !important;
-}
-
-/* 🌟 픽스: 복사하기 박스(코드 블록) 바탕색 및 글자색 강제 수정 */
-[data-testid="stCodeBlock"] {
-    background-color: #0f3460 !important;
-    border: 2px solid #00ffcc !important;
-}
-[data-testid="stCodeBlock"] * {
-    color: #00ffcc !important;
-    background-color: transparent !important;
+    white-space: normal !important; word-break: keep-all !important;
+    overflow-wrap: break-word !important; font-size: 1.4rem !important; line-height: 1.3 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -105,7 +77,7 @@ def get_billionaire_rank(my_salary, company_avg):
     elif ratio >= 1.2: return {"상위": "10.0%", "계급": 4, "칭호": "피터 틸"}
     elif ratio >= 1.0: return {"상위": "20.0%", "계급": 5, "칭호": "워렌 버핏"}
     elif ratio >= 0.8: return {"상위": "40.0%", "계급": 6, "칭호": "기숙사 시절 마크 져커버그"}
-    elif ratio >= 0.6: return {"상위": "60.0%", "계급": 7, "칭호": "창고시절 제프 베이조스"}
+    elif ratio >= 0.6: return {"상위": "60.0%", "계급": 7, "칭호": "창고시절 제프 베이죠스"}
     elif ratio >= 0.5: return {"상위": "75.0%", "계급": 8, "칭호": "차고시절 스티브 잡스"}
     elif ratio >= 0.3: return {"상위": "90.0%", "계급": 9, "칭호": "거절만 당하는 커널 센더스"}
     else: return {"상위": "99.0%", "계급": 10, "칭호": "신문 돌리던 워렌버핏"}
@@ -113,7 +85,6 @@ def get_billionaire_rank(my_salary, company_avg):
 def fetch_company_data(company_name):
     company_name = company_name.upper().strip()
     
-    # 🌟 SK 본사 및 텔레콤 등 굵직한 곳 추가!
     vip_mapping = {
         "SK": "에스케이 주식회사",
         "SK텔레콤": "에스케이텔레콤(주)",
@@ -156,8 +127,15 @@ def fetch_company_data(company_name):
             all_items.extend(items)
         except: break
 
-    valid_items = [i for i in all_items if not any(w in i.get('wkplNm', '') for w in ["/", "일용", "공사", "현장", "건설"])]
-    valid_items.sort(key=lambda x: len(x.get('wkplNm', '')))
+    # 🌟 스팸 필터 강화 (어린이집 등 추가)
+    valid_items = [i for i in all_items if not any(w in i.get('wkplNm', '') for w in ["/", "일용", "공사", "현장", "건설", "어린이집", "유치원"])]
+    
+    # 🌟 완벽 정렬 치트키: 검색어와 '정확히' 일치하는 회사를 무조건 0순위로 맨 위로!
+    target_name = company_name.replace(" ", "")
+    valid_items.sort(key=lambda x: (
+        0 if x.get('wkplNm', '').replace(' ', '') == target_name else 1, 
+        len(x.get('wkplNm', ''))
+    ))
     
     best_company = None
     max_emp = 0
@@ -211,19 +189,28 @@ def compare_my_salary(company: str, total_salary: int):
 # ==========================================
 # 2. 프론트엔드 로직
 # ==========================================
-IMAGE_DIR = "images"
+# 🌟 확장자를 뺀 순수 파일명만 매핑
 RANK_IMAGES = {
-    "일론머스크": f"{IMAGE_DIR}/1계급 일론머스크.jpg",
-    "만수르": f"{IMAGE_DIR}/2계급 만수르.jpg",
-    "젠슨 황": f"{IMAGE_DIR}/3계급 젠슨 황.jpg",
-    "피터 틸": f"{IMAGE_DIR}/4계급 피터 틸.jpg",
-    "워렌 버핏": f"{IMAGE_DIR}/5계급 워렌 버핏.jpg",
-    "기숙사 시절 마크 져커버그": f"{IMAGE_DIR}/6계급 기숙사 시절 마크 져커버그.jpg",
-    "창고시절 제프 베이조스": f"{IMAGE_DIR}/7계급 창고시절 제프 베이조스.jpg",
-    "차고시절 스티브 잡스": f"{IMAGE_DIR}/8계급 차고시절 스티브 잡스.jpg",
-    "거절만 당하는 커널 센더스": f"{IMAGE_DIR}/9계급 거절만 당하는 커널 센더스.jpg",
-    "신문 돌리던 워렌버핏": f"{IMAGE_DIR}/10계급 신문 돌리던 워렌버핏.jpg"
+    "일론머스크": "1계급 일론머스크",
+    "만수르": "2계급 만수르",
+    "젠슨 황": "3계급 젠슨 황",
+    "피터 틸": "4계급 피터 틸",
+    "워렌 버핏": "5계급 워렌 버핏",
+    "기숙사 시절 마크 져커버그": "6계급 기숙사 시절 마크 져커버그",
+    "창고시절 제프 베이죠스": "7계급 창고시절 제프 베이죠스",
+    "차고시절 스티브 잡스": "8계급 차고시절 스티브 잡스",
+    "거절만 당하는 커널 센더스": "9계급 거절만 당하는 커널 센더스",
+    "신문 돌리던 워렌버핏": "10계급 신문 돌리던 워렌버핏"
 }
+
+# 🌟 jpg, png 등 확장자 자동 탐색 함수 추가!
+def get_image_path(rank_title):
+    base_name = RANK_IMAGES.get(rank_title)
+    if not base_name: return None
+    for ext in ['.jpg', '.png', '.jpeg', '.JPG', '.PNG']:
+        path = f"images/{base_name}{ext}"
+        if os.path.exists(path): return path
+    return None
 
 st.markdown("<h1 style='text-align: center; color: #ffeb3b !important;'>👾 영끌 연봉 억만장자 랭킹전 👾</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>연말정산 원천징수영수증 기준으로 나의 진짜 랭킹을 확인하세요!</p>", unsafe_allow_html=True)
@@ -253,11 +240,11 @@ if st.button("🕹️ INSERT COIN : 내 랭킹 확인하기 🕹️", use_contai
                 with tab1:
                     st.subheader(f"사내에서 당신은 **[{result['회사_결과']['칭호']}]** 계급 (총 10계급 중 {result['회사_결과']['계급']}계급)입니다!")
                     
-                    img_path = RANK_IMAGES.get(result['회사_결과']['칭호'])
-                    if img_path and os.path.exists(img_path):
+                    img_path = get_image_path(result['회사_결과']['칭호'])
+                    if img_path:
                         st.image(img_path, use_container_width=True) 
                     else:
-                        st.error(f"⚠️ 이미지를 찾을 수 없습니다: {img_path}")
+                        st.error(f"⚠️ 이미지를 찾을 수 없습니다: 깃허브 images 폴더에 '{RANK_IMAGES.get(result['회사_결과']['칭호'])}' 파일이 있는지(띄어쓰기 확인) 확인해주세요!")
                         
                     m_col1, m_col2, m_col3 = st.columns(3)
                     m_col1.metric("비교 기업", result['비교_기업명'])
@@ -267,11 +254,11 @@ if st.button("🕹️ INSERT COIN : 내 랭킹 확인하기 🕹️", use_contai
                 with tab2:
                     st.subheader(f"전국 직장인 중 당신은 **[{result['전국_결과']['칭호']}]** 계급 (총 10계급 중 {result['전국_결과']['계급']}계급)입니다!")
                     
-                    img_path = RANK_IMAGES.get(result['전국_결과']['칭호'])
-                    if img_path and os.path.exists(img_path):
+                    img_path = get_image_path(result['전국_결과']['칭호'])
+                    if img_path:
                         st.image(img_path, use_container_width=True)
                     else:
-                        st.error(f"⚠️ 이미지를 찾을 수 없습니다: {img_path}")
+                        st.error(f"⚠️ 이미지를 찾을 수 없습니다: 깃허브 images 폴더에 '{RANK_IMAGES.get(result['전국_결과']['칭호'])}' 파일이 있는지(띄어쓰기 확인) 확인해주세요!")
                         
                     m_col1, m_col2, m_col3 = st.columns(3)
                     m_col1.metric("비교 집단", "전국 직장인")
@@ -280,8 +267,8 @@ if st.button("🕹️ INSERT COIN : 내 랭킹 확인하기 🕹️", use_contai
                 
                 st.divider()
                 st.markdown("<h3 style='color: #ffeb3b !important;'>💌 친구에게 도전장 보내기 (결과 복사)</h3>", unsafe_allow_html=True)
-                st.caption("👇 아래 네모 박스 오른쪽 위에 마우스를 올리면 생기는 **'복사 아이콘(📋)'**을 누르고 카톡에 붙여넣어 보세요!")
+                st.caption("👇 아래 텍스트 박스 안을 클릭하고 전체복사(Ctrl+A -> Ctrl+C)해서 카톡에 붙여넣어 보세요!")
                 
-                # 🌟 보호색 버그 픽스된 코드 블록
-                st.code(result['공유_메시지'], language="plaintext")
+                # 🌟 모바일 친화적인 text_area로 변경! (보호색 해결)
+                st.text_area("복사용 텍스트 (수정 불가)", value=result['공유_메시지'], height=180, disabled=True, label_visibility="collapsed")
                 st.balloons()
