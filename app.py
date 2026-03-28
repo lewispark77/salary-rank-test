@@ -67,6 +67,15 @@ div.stButton > button:active {
     background-color: #16213e !important;
     border: 2px solid #e94560 !important;
 }
+
+/* 🌟 추가: 긴 기업명 잘림(...) 방지 및 예쁘게 줄바꿈 처리 */
+[data-testid="stMetricValue"] > div {
+    white-space: normal !important;
+    word-break: keep-all !important;
+    overflow-wrap: break-word !important;
+    font-size: 1.4rem !important; /* 글자가 너무 크면 넘치니 살짝 줄임 */
+    line-height: 1.3 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -164,7 +173,6 @@ def compare_my_salary(company: str, total_salary: int):
     company_rank = get_billionaire_rank(total_salary, comp_data["평균연봉"])
     national_rank = get_billionaire_rank(total_salary, NATIONAL_AVERAGE)
     
-    # 🌟 바이럴(공유)용 메시지 업그레이드! (카톡용 이모지 및 앱 접속 링크 추가)
     app_link = "https://salary-rank-test-8sdapymoyastkizhxfaiy6.streamlit.app"
     
     viral_message = (
@@ -257,11 +265,8 @@ if st.button("🕹️ INSERT COIN : 내 랭킹 확인하기 🕹️", use_contai
                     m_col3.metric("나의 위치", f"상위 {result['전국_결과']['상위']}")
                 
                 st.divider()
-                
-                # 🌟 바이럴 카톡 공유창 업그레이드!
                 st.markdown("<h3 style='color: #ffeb3b !important;'>💌 친구에게 도전장 보내기 (결과 복사)</h3>", unsafe_allow_html=True)
                 st.caption("👇 아래 네모 박스 오른쪽 위에 마우스를 올리면 생기는 **'복사 아이콘(📋)'**을 누르고 카톡에 붙여넣어 보세요!")
                 
-                # 코드를 보여주는 st.code()를 활용하면 스트림릿이 자동으로 '원클릭 복사' 버튼을 만들어줍니다.
                 st.code(result['공유_메시지'], language="plaintext")
                 st.balloons()
